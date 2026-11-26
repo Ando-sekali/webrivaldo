@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Diri - Rivaldo | Programmer & Musisi</title>
+    <!-- Font modern dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Ikon dari Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at center, #1b153a 0%, #090714 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* --- VISUALISASI BACKGROUND --- */
+        .bg-visualizer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Canvas Gelombang Audio (Audio Wave) */
+        #waveCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.65;
+        }
+
+        /* Piringan Hitam (Vinyl) Raksasa di Sudut */
+        .bg-vinyl {
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.04);
+            background: repeating-radial-gradient(
+                circle at center,
+                rgba(255, 255, 255, 0.02) 0px,
+                rgba(255, 255, 255, 0.02) 2px,
+                transparent 3px,
+                transparent 12px
+            );
+            animation: spinSlow 25s linear infinite;
+        }
+
+        .bg-vinyl.left {
+            top: -180px;
+            left: -180px;
+            box-shadow: 0 0 80px rgba(233, 69, 96, 0.15);
+        }
+
+        .bg-vinyl.right {
+            bottom: -200px;
+            right: -180px;
+            box-shadow: 0 0 80px rgba(0, 242, 254, 0.15);
+            animation-direction: reverse;
+        }
+
+        @keyframes spinSlow {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notasi Musik Melayang */
+        .floating-notes span {
+            position: absolute;
+            bottom: -50px;
+            color: rgba(0, 242, 254, 0.2);
+            font-size: 24px;
+            animation: floatUp 12s linear infinite;
+        }
+
+        .floating-notes span:nth-child(1) { left: 10%; font-size: 28px; animation-duration: 14s; animation-delay: 0s; color: rgba(233, 69, 96, 0.25); }
+        .floating-notes span:nth-child(2) { left: 25%; font-size: 20px; animation-duration: 10s; animation-delay: 2s; }
+        .floating-notes span:nth-child(3) { left: 45%; font-size: 32px; animation-duration: 16s; animation-delay: 4s; color: rgba(233, 69, 96, 0.2); }
+        .floating-notes span:nth-child(4) { left: 65%; font-size: 22px; animation-duration: 11s; animation-delay: 1s; }
+        .floating-notes span:nth-child(5) { left: 80%; font-size: 30px; animation-duration: 15s; animation-delay: 3s; color: rgba(233, 69, 96, 0.25); }
+        .floating-notes span:nth-child(6) { left: 92%; font-size: 18px; animation-duration: 13s; animation-delay: 5s; }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.8;
+            }
+            80% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* --- KARTU PROFIL UTAMA --- */
+        .container {
+            max-width: 550px;
+            width: 100%;
+            background: rgba(20, 18, 42, 0.72);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 30px rgba(0, 242, 254, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+            max-height: 95vh;
+        }
+
+        .profile-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        img {
+            width: 135px;
+            height: 135px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e94560;
+            box-shadow: 0 0 25px rgba(233, 69, 96, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.06) rotate(3deg);
+        }
+
+        /* Animasi Equalizer Mini */
+        .equalizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 24px;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .bar {
+            width: 5px;
+            background: linear-gradient(to top, #e94560, #00f2fe);
+            border-radius: 3px;
+            animation: bounce 1s infinite ease-in-out;
+        }
+
+        .bar:nth-child(1) { height: 10px; animation-delay: 0.1s; }
+        .bar:nth-child(2) { height: 22px; animation-delay: 0.3s; }
+        .bar:nth-child(3) { height: 15px; animation-delay: 0.5s; }
+        .bar:nth-child(4) { height: 24px; animation-delay: 0.2s; }
+        .bar:nth-child(5) { height: 12px; animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 100% { transform: scaleY(0.4); }
+            50% { transform: scaleY(1); }
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            background: linear-gradient(90deg, #ffffff, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .tagline {
+            font-size: 13.5px;
+            color: #e94560;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .bio {
+            font-size: 14px;
+            line-height: 1.7;
+            color: #d1d5db;
+            background: rgba(0, 0, 0, 0.35);
+            padding: 15px 20px;
+            border-radius: 14px;
+            border-left: 4px solid #00f2fe;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        .info-list {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 22px;
+        }
+
+        .info-list li {
+            font-size: 14px;
+            color: #e5e7eb;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .info-list li:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(4px);
+        }
+
+        .info-list i {
+            color: #00f2fe;
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Pemutar Musik Interaktif */
+        .now-playing {
+            background: linear-gradient(90deg, rgba(233, 69, 96, 0.2), rgba(0, 242, 254, 0.15));
+            border: 1px solid rgba(233, 69, 96, 0.4);
+            padding: 12px 16px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .now-playing:hover {
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.25);
+        }
+
+        .now-playing .track-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .now-playing i.fa-compact-disc {
+            font-size: 26px;
+            color: #e94560;
+            animation: spin 4s linear infinite;
+        }
+
+        .paused i.fa-compact-disc,
+        .paused .bar {
+            animation-play-state: paused;
+        }
+
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Lapisan Visualisasi Background Musik -->
+    <div class="bg-visualizer">
+        <!-- Gelombang Frekuensi Audio -->
+        <canvas id="waveCanvas"></canvas>
+
+        <!-- Piringan Hitam Dekoratif -->
+        <div class="bg-vinyl left"></div>
+        <div class="bg-vinyl right"></div>
+
+        <!-- Partikel Notasi Musik & Kode Melayang -->
+        <div class="floating-notes">
+            <span><i class="fas fa-music"></i></span>
+            <span><i class="fas fa-guitar"></i></span>
+            <span><i class="fas fa-headphones"></i></span>
+            <span><i class="fas fa-code"></i></span>
+            <span><i class="fas fa-sliders-h"></i></span>
+            <span><i class="fas fa-compact-disc"></i></span>
+        </div>
+    </div>
+
+    <!-- Kartu Profil Utama -->
+    <div class="container" id="profileCard">
+        <div class="profile-wrapper">
+            <img src="gambardiri.jpg" alt="Foto Profil Aldo">
+        </div>
+
+        <!-- Animasi Equalizer -->
+        <div class="equalizer">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+
+        <h1>Rivaldo</h1>
+        <div class="tagline"><i class="fas fa-code"></i> Programmer &bull; <i class="fas fa-music"></i> Musisi</div>
+
+        <div class="bio">
+            Halo! Saya <strong>Rivaldo Gabriel Robert</strong>, seorang developer yang sehari-hari merangkai baris kode untuk membangun solusi digital, sekaligus seorang musisi yang mengekspresikan ide lewat nada dan ritme. Bagi saya, <em>coding</em> dan bermusik punya harmoni yang sama: memadukan logika, struktur, dan kreativitas untuk menciptakan karya yang bermakna.
+        </div>
+
+        <ul class="info-list">
+            <li>
+                <i class="fas fa-envelope"></i>
+                <span><strong>Email:</strong> rivaldogabriel_26@kharisma.ac.id</span>
+            </li>
+            <li>
+                <i class="fas fa-phone-alt"></i>
+                <span><strong>Telepon:</strong> 088880128310</span>
+            </li>
+            <li>
+                <i class="fas fa-map-marker-alt"></i>
+                <span><strong>Alamat:</strong> Makassar, Indonesia</span>
+            </li>
+        </ul>
+
+        <!-- Klik untuk Play/Pause efek visual -->
+        <div class="now-playing" id="musicToggle" title="Klik untuk Pause/Play visualisasi">
+            <div class="track-info">
+                <i class="fas fa-compact-disc"></i>
+                <div>
+                    <div style="font-weight: 600; color: #fff;">Coding & Jamming Session</div>
+                    <div style="font-size: 11px; color: #00f2fe;" id="statusText">Visualizer Active &bull; Klik untuk jeda</div>
+                </div>
+            </div>
+            <i class="fas fa-pause-circle" id="playIcon" style="color: #00f2fe; font-size: 20px;"></i>
+        </div>
+    </div>
+
+    <!-- Script untuk Animasi Gelombang Audio (Audio Waveform) -->
+    <script>
+        const canvas = document.getElementById('waveCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let phase = 0;
+        let isPlaying = true;
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Konfigurasi 3 lapisan gelombang suara neon
+        const waves = [
+            { amplitude: 45, frequency: 0.008, speed: 0.03, color: 'rgba(233, 69, 96, 0.45)', lineWidth: 2.5 },
+            { amplitude: 65, frequency: 0.005, speed: 0.02, color: 'rgba(0, 242, 254, 0.35)', lineWidth: 2 },
+            { amplitude: 30, frequency: 0.012, speed: 0.04, color: 'rgba(138, 43, 226, 0.4)', lineWidth: 1.5 }
+        ];
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+
+            // Gambar batang spektrum audio halus di bagian bawah layar
+            const barCount = 50;
+            const barWidth = width / barCount;
+            for (let i = 0; i < barCount; i++) {
+                const barHeight = Math.abs(Math.sin(phase * 1.5 + i * 0.25)) * 90 + 10;
+                const gradient = ctx.createLinearGradient(0, height - barHeight, 0, height);
+                gradient.addColorStop(0, 'rgba(0, 242, 254, 0.18)');
+                gradient.addColorStop(1, 'rgba(233, 69, 96, 0.02)');
+                
+                ctx.fillStyle = gradient;
+                ctx.fillRect(i * barWidth + 2, height - barHeight, barWidth - 4, barHeight);
+            }
+
+            // Gambar gelombang frekuensi sinusoidal di tengah layar
+            waves.forEach((wave, index) => {
+                ctx.beginPath();
+                ctx.lineWidth = wave.lineWidth;
+                ctx.strokeStyle = wave.color;
+
+                for (let x = 0; x < width; x++) {
+                    // Efek meredam di ujung kiri dan kanan layar
+                    const edgeFade = Math.sin((x / width) * Math.PI);
+                    const y = (height / 2) + 
+                              Math.sin(x * wave.frequency + phase * (index + 1) * 0.7) * 
+                              wave.amplitude * edgeFade;
+                    
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+            });
+
+            if (isPlaying) {
+                phase += 0.03;
+            }
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+
+        // Fitur Interaktif: Klik kotak "Now Playing" untuk Play/Pause animasi
+        const musicToggle = document.getElementById('musicToggle');
+        const profileCard = document.getElementById('profileCard');
+        const playIcon = document.getElementById('playIcon');
+        const statusText = document.getElementById('statusText');
+
+        musicToggle.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                profileCard.classList.remove('paused');
+                playIcon.className = 'fas fa-pause-circle';
+                statusText.textContent = 'Visualizer Active • Klik untuk jeda';
+            } else {
+                profileCard.classList.add('paused');
+                playIcon.className = 'fas fa-play-circle';
+                statusText.textContent = 'Visualizer Paused • Klik untuk lanjut';
+            }
+        });
+    </script>
+</body>
+</html>
